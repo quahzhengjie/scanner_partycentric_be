@@ -1,5 +1,6 @@
 package com.bkb.scanner.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +16,8 @@ import java.util.List;
 @Entity
 @Table(name = "csob_cases")
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(exclude = {"relatedPartyLinks", "accounts", "documentLinks", "activities", "accountApprovalSnapshots"})
+@ToString(exclude = {"relatedPartyLinks", "accounts", "documentLinks", "activities", "accountApprovalSnapshots"})
 @EntityListeners(AuditingEntityListener.class)
 public class Case {
     @Id
@@ -44,20 +46,20 @@ public class Case {
     @Embedded
     private EntityData entityData;
 
-    @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
+    @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference("case-party-link")
     private List<CasePartyLink> relatedPartyLinks = new ArrayList<>();
 
     @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
+    @JsonManagedReference("case-account")
     private List<Account> accounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
+    @JsonManagedReference("case-document-link")
     private List<CaseDocumentLink> documentLinks = new ArrayList<>();
 
     @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
+    @JsonManagedReference("case-activity")
     private List<ActivityLog> activities = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -65,7 +67,7 @@ public class Case {
     private ApprovalSnapshot kycApprovalSnapshot;
 
     @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
+    @JsonManagedReference("case-approval-snapshot")
     private List<ApprovalSnapshot> accountApprovalSnapshots = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")

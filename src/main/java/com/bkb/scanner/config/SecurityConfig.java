@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> {
                     log.info("Setting up authorization rules...");
                     authz
-                            // Public endpoints - Be very explicit
+                            // Public endpoints
                             .requestMatchers("/auth/**").permitAll()
                             .requestMatchers("/health").permitAll()
                             .requestMatchers("/public/**").permitAll()
@@ -75,6 +75,9 @@ public class SecurityConfig {
                             .requestMatchers("/swagger-ui/**").permitAll()
                             .requestMatchers("/v3/api-docs/**").permitAll()
                             .requestMatchers("/swagger-resources/**").permitAll()
+
+                            // FIX: Explicitly permit WebSocket endpoint
+                            .requestMatchers("/ws/**").permitAll()
 
                             // Mock endpoints for testing
                             .requestMatchers("/mockcases/**").permitAll()
